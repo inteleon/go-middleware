@@ -9,32 +9,29 @@ import (
 )
 
 type newRelic struct {
-	trace string
 	nrtx  newrelic.Transaction
 	nrseg *newrelic.Segment
 }
 
 // NewNewRelic creates and returns a new New Relic tracer.
-func NewNewRelic(ctx context.Context, trace string) *newRelic {
+func NewNewRelic(ctx context.Context) *newRelic {
 	nrtx, ok := ctx.Value(monitoringctx.NewRelicKey).(newrelic.Transaction)
 	if !ok {
 		nrtx = nil
 	}
 
 	return &newRelic{
-		trace: trace,
-		nrtx:  nrtx,
+		nrtx: nrtx,
 	}
 }
 
 // Begin starts tracing a New Relic transaction segment.
-func (n *newRelic) Begin() {
+func (n *newRelic) Begin(trace string) {
 	if n.nrtx == nil {
 		return
 	}
 
-	seg := newrelic.StartSegment(n.nrtx, n.trace)
-	n.nrseg = seg
+	n.nrseg = newrelic.StartSegment(n.nrtx, trace)
 }
 
 // End ends the tracing of a New Relic transaction segment.

@@ -9,13 +9,19 @@ import (
 	monitoringctx "github.com/inteleon/go-middleware/monitoring/context"
 )
 
-// Interceptor is the New Relic GRPC interceptor.
-type Interceptor struct {
+type interceptor struct {
 	newRelicApp nragent.Application
 }
 
+// NewInterceptor creates and returns a new New Relic interceptor.
+func NewInterceptor(newRelicApp nragent.Application) *interceptor {
+	return &interceptor{
+		newRelicApp: newRelicApp,
+	}
+}
+
 // Intercept is the grpc.UnaryServerInterceptor function for tracing GRPC requests using New Relic.
-func (i *Interceptor) Intercept(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+func (i *interceptor) Intercept(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 	txn := i.newRelicApp.StartTransaction(info.FullMethod, nil, nil)
 	defer txn.End()
 

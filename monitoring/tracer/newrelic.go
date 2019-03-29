@@ -42,3 +42,8 @@ func (n *newRelic) End() {
 
 	n.nrseg.End()
 }
+
+// Transaction returns the New Relic transaction object.
+func (n *newRelic) Transaction() newrelic.Transaction {
+	return n.nrtx
+}
